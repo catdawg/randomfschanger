@@ -41,9 +41,11 @@
     "verror": "^1.10.0",
     "winston": "^2.4.0",
     "fs-extra": "^4.0.3",
-    "semaphore-async-await": "^1.5.1"
+    "semaphore-async-await": "^1.5.1",
+    "chance": "^1.0.16"
   },
   "devDependencies": {
+    "@types/chance": "1.0.0",
     "@types/chai": "^4.1.2",
     "@types/chokidar": "^1.7.5",
     "@types/fs-extra": "^5.0.1",

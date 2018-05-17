@@ -11,6 +11,14 @@ This library provides a way to randomly change a directory in order to mimic fil
 
 ## Usage
 
+'''
+await runRandomFSChanger("adirectory/something/", 60000); // runs for 60 seconds
+await runRandomFSChanger("adirectory/something/", 60000, {
+    seed: 1234,
+    workerCount: 4
+}); // runs for 60 seconds using a specific seed and worker count
+
+'''
 
 ## Tests
 
