@@ -46,8 +46,8 @@ weightConfig.set(RandomChange.DeleteDirectory,   7);
 weightConfig.set(RandomChange.GoIntoDirectory,   40);
 weightConfig.set(RandomChange.StepOutDirectory,  5);
 
-const waitTicks = 50000;
-const waitTicksWriting = 5000;
+const waitTicks = 500;
+const waitTicksWriting = 50;
 
 /**
  * Additional options for the randomizer
@@ -178,19 +178,19 @@ class Worker {
         switch (nextAction) {
             case RandomChange.AddDirectory: {
                 const newDirectoryPath = pathutils.join(this._currentPath, this._name + "_" + this._chance.guid());
-                winston.log("info", "%s creating directory %s", this._name, newDirectoryPath.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s creating directory %s", this._name, newDirectoryPath.substr(this._basePath.length));
                 await fse.mkdir(newDirectoryPath);
                 break;
             }
             case RandomChange.AddFile: {
                 const newFilePath = pathutils.join(this._currentPath, this._name + "_" + this._chance.guid());
-                winston.log("info", "%s creating file %s", this._name, newFilePath.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s creating file %s", this._name, newFilePath.substr(this._basePath.length));
                 await fse.writeFile(newFilePath, this._chance.sentence);
                 break;
             }
             case RandomChange.ChangeFile: {
                 const file = pathutils.join(this._currentPath, files[0]);
-                winston.log("info", "%s changing file %s", this._name, file.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s changing file %s", this._name, file.substr(this._basePath.length));
                 this._state = WorkerState.ChangingFile;
                 this._fdBeingChanged = await fse.open(file, "w");
                 this._ticksLeft = waitTicksWriting;
@@ -198,25 +198,25 @@ class Worker {
             }
             case RandomChange.DeleteDirectory: {
                 const dir = pathutils.join(this._currentPath, directories[0]);
-                winston.log("info", "%s deleting directory %s", this._name, dir.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s deleting directory %s", this._name, dir.substr(this._basePath.length));
                 await fse.remove(dir);
                 break;
             }
             case RandomChange.DeleteFile: {
                 const file = pathutils.join(this._currentPath, files[0]);
-                winston.log("info", "%s deleting file %s", this._name, file.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s deleting file %s", this._name, file.substr(this._basePath.length));
                 await fse.remove(file);
                 break;
             }
             case RandomChange.GoIntoDirectory: {
                 this._currentPath = pathutils.join(this._currentPath, directories[0]);
-                winston.log("info", "%s going into %s", this._name, this._currentPath.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s going into %s", this._name, this._currentPath.substr(this._basePath.length));
                 break;
             }
             case RandomChange.StepOutDirectory: {
                 const tokens = this._currentPath.split(pathutils.sep);
                 tokens.pop();
-                winston.log("info", "%s stepping out of %s", this._name, this._currentPath.substr(this._basePath.length));
+                winston.log("info", "[randomfschanger]%s stepping out of %s", this._name, this._currentPath.substr(this._basePath.length));
                 this._currentPath = tokens.join(pathutils.sep);
                 break;
             }
@@ -269,5 +269,9 @@ export async function runRandomFSChanger(path: string, durationInMS: number, opt
     }
     while (Date.now() - startTime < durationInMS) {
         await Promise.all(workers.map((w) => w.tick()));
+        
+        await new Promise((resolve) => {
+            setTimeout(resolve, 1);
+        });
     }
 }

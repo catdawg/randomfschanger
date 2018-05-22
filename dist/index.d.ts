@@ -26,5 +26,6 @@ export interface IRandomFSChangerOptions {
  * @param path the to randomize
  * @param durationInMS the duration
  * @param options the aditional options
+ * @throws VError if path or duration are not specified, or if path doesn't exist
  */
 export declare function runRandomFSChanger(path: string, durationInMS: number, options?: IRandomFSChangerOptions): Promise<void>;
