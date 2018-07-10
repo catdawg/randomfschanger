@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import * as pathutils from "path";
 import { VError } from "verror";
 import * as winston from "winston";
-import { FSWatcher, Stats } from "fs-extra";
+import { Stats } from "fs-extra";
 
 winston.addColors({
     debug: "blue",
