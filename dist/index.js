@@ -33,7 +33,16 @@ winston.add(new winston.transports.Console({
     format: winston.format.combine(winston.format.splat(), winston.format.colorize(), winston.format.padLevels(), winston.format.timestamp(), winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)),
     silent: false,
 }));
+/**
+ * RandomFSChanger functions as an interface to a separate process that changes a directory randomly.
+ * Used to test systems that use data from the filesystem, specially those that listen to changes.
+ */
 class RandomFSChanger {
+    /**
+     * Build the random fs changer interface. Options are optional, and filled out with default data.
+     * @param path the path to change
+     * @param options the options (optional)
+     */
     constructor(path, options = {}) {
         this.childProcess = child_process_1.fork(pathutils.join(__dirname, "..", "dist", "fork.js"));
         this.childProcess.on("message", (msg) => {
@@ -56,11 +65,17 @@ class RandomFSChanger {
         };
         this.childProcess.send(setupMessage);
     }
+    /**
+     * Start changes, stop needs to be called afterwards.
+     */
     start() {
         this.childProcess.send({
             type: "Start",
         });
     }
+    /**
+     * Stop the changes, needs to wait for the changer to confirm that it finished.
+     */
     stop() {
         return __awaiter(this, void 0, void 0, function* () {
             this.childProcess.send({

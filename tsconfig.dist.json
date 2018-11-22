@@ -3,13 +3,13 @@
     "compilerOptions": {
         "module": "commonjs",
         "esModuleInterop": true,
-        "allowJs": true,
         "target": "es6",
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": "src"
+        "baseUrl": "src",
+        "declaration": true
     },
     "include": [
         "./src/**/*"

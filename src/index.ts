@@ -29,16 +29,31 @@ winston.add(new winston.transports.Console({
 }));
 
 export interface IRandomFSChangerOptions {
-    seed?: number; // default 0
+    /**
+     * The seed (defaults to 0), use this to reliably repeat changes to the filesystem.
+     */
+    seed?: number;
+    /**
+     * The worker count (defaults to 4), use this to increase load.
+     */
     workerCount?: number; // default 4
 }
 
+/**
+ * RandomFSChanger functions as an interface to a separate process that changes a directory randomly.
+ * Used to test systems that use data from the filesystem, specially those that listen to changes.
+ */
 export class RandomFSChanger {
 
     private stopCb: () => void;
 
     private childProcess: ChildProcess;
 
+    /**
+     * Build the random fs changer interface. Options are optional, and filled out with default data.
+     * @param path the path to change
+     * @param options the options (optional)
+     */
     constructor(path: string, options: IRandomFSChangerOptions = {}) {
 
         this.childProcess = fork(pathutils.join(__dirname, "..", "dist", "fork.js"));
@@ -68,12 +83,18 @@ export class RandomFSChanger {
         this.childProcess.send(setupMessage);
     }
 
+    /**
+     * Start changes, stop needs to be called afterwards.
+     */
     public start() {
         this.childProcess.send({
             type: "Start",
         } as IStartMessage);
     }
 
+    /**
+     * Stop the changes, needs to wait for the changer to confirm that it finished.
+     */
     public async stop() {
         this.childProcess.send({
             type: "Stop",
