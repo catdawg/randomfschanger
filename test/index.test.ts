@@ -4,14 +4,13 @@ const expect = chai.expect;
 
 import * as pathutils from "path";
 import * as tmp from "tmp";
-import { VError } from "verror";
 import * as fse from "fs-extra";
+import { RandomFSChanger } from "../src";
 
-import { runRandomFSChanger } from "../src/index";
 
 describe("randomFSChanger", () => {
 
-    let tmpDir = null;
+    let tmpDir: tmp.SynchrounousResult = null;
     beforeAll(() => {
         tmpDir = tmp.dirSync();
     });
@@ -29,72 +28,38 @@ describe("randomFSChanger", () => {
     });
 
     it("test", async () => {
-        await runRandomFSChanger(tmpDir.name, 50000);
-    }, 600000);
+        const randomfschanger = new RandomFSChanger(tmpDir.name);
+        
+        randomfschanger.start();
+
+        await new Promise((resolve, reject) => {
+            setTimeout(resolve, 50000)
+        });
+
+        await randomfschanger.stop();
+    }, 6000000);
 
     it("test with seed", async () => {
-        await runRandomFSChanger(tmpDir.name, 50000, {seed: 9999});
+        const randomfschanger = new RandomFSChanger(tmpDir.name, {seed:9999});
+        
+        randomfschanger.start();
+
+        await new Promise((resolve, reject) => {
+            setTimeout(resolve, 50000)
+        });
+
+        await randomfschanger.stop();
     }, 600000);
 
     it("test with worker count", async () => {
-        await runRandomFSChanger(tmpDir.name, 50000, {workerCount: 10});
-    }, 600000);
-
-    it("test args", async () => {
-        let except = null;
-        try {
-            await runRandomFSChanger(null, null);
-        } catch (e) {
-            except = e;
-        }
-
-        expect(except).to.be.instanceof(VError);
+        const randomfschanger = new RandomFSChanger(tmpDir.name, {workerCount: 4});
         
-        except = null;
-        try {
-            await runRandomFSChanger("something", null);
-        } catch (e) {
-            except = e;
-        }
+        randomfschanger.start();
 
-        expect(except).to.be.instanceof(VError);
-        
-        except = null;
-        try {
-            await runRandomFSChanger(tmpDir.name, null);
-        } catch (e) {
-            except = e;
-        }
+        await new Promise((resolve, reject) => {
+            setTimeout(resolve, 50000)
+        });
 
-        expect(except).to.be.instanceof(VError);
-        
-        except = null;
-        try {
-            await runRandomFSChanger("something", 1000);
-        } catch (e) {
-            except = e;
-        }
-
-        expect(except).to.be.instanceof(VError);
-        
-        const file = pathutils.join(tmpDir.name, "afile");
-        await fse.writeFile(file, "someting");
-        except = null;
-        try {
-            await runRandomFSChanger(file, 1000);
-        } catch (e) {
-            except = e;
-        }
-
-        expect(except).to.be.instanceof(VError);
-        
-        except = null;
-        try {
-            await runRandomFSChanger(null, 1000);
-        } catch (e) {
-            except = e;
-        }
-
-        expect(except).to.be.instanceof(VError);
+        await randomfschanger.stop();
     }, 600000);
 });

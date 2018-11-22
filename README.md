@@ -3,7 +3,7 @@
 Random Filesystem Changer
 =========
 
-This library provides a way to randomly change a directory in order to mimic filesystem changes. The idea is to use this to stress test components in applications that operate on filesystem changes.
+This library provides a way to randomly change a directory in order to mimic filesystem changes. The idea is to use this to stress test components in applications that operate on filesystem changes. It runs on a separate process, to attempt to mimic typical conditions of concurrent reads and writes.
 
 ## Installation
 
@@ -12,14 +12,17 @@ This library provides a way to randomly change a directory in order to mimic fil
 ## Usage
 
 '''
-await runRandomFSChanger("adirectory/something/", 60000); // runs for 60 seconds
-await runRandomFSChanger("adirectory/something/", 60000, {
-    seed: 1234,
-    workerCount: 4
-}); // runs for 60 seconds using a specific seed and worker count
 
+const randomfschanger = new RandomFSChanger(tmpDir.name, {
+    seed: 1234, // random seed, to replicate the same file changes
+    workerCount: 4 // how many workers will be independently writing on the filesystem, to test load.
+});
+
+randomfschanger.start();
+// wait for the changer to work
+await randomfschanger.stop(); // waits for confirmation from the changer that it actually stopped.
 '''
 
 ## Tests
-
+  `npm run dist` - fork.js needs to be generated.
   `npm test`
