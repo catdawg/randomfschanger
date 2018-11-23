@@ -1,6 +1,6 @@
 {
   "name": "randomfschanger",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Change a folder randomly by adding/removing/editing files and directories over a specified period of time. Used for stress testing filesystem watching utilities.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
