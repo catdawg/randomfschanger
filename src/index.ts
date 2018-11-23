@@ -36,7 +36,11 @@ export class RandomFSChanger {
      */
     constructor(path: string, options: IRandomFSChangerOptions = {}) {
 
-        this.childProcess = fork(pathutils.join(__dirname, "..", "dist", "fork.js"));
+        this.childProcess = fork(
+            pathutils.join(__dirname, "..", "dist", "fork.js"), 
+            [],
+            {execArgv: []}
+        );
 
         this.childProcess.on("message", (msg) => {
             if (msg != null && msg.type != null) {
