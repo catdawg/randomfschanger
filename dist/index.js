@@ -28,7 +28,7 @@ class RandomFSChanger {
      * @param options the options (optional)
      */
     constructor(path, options = {}) {
-        this.childProcess = child_process_1.fork(pathutils.join(__dirname, "..", "dist", "fork.js"));
+        this.childProcess = child_process_1.fork(pathutils.join(__dirname, "..", "dist", "fork.js"), [], { execArgv: [] });
         this.childProcess.on("message", (msg) => {
             if (msg != null && msg.type != null) {
                 if (msg.type === "Stopped") {
@@ -36,11 +36,12 @@ class RandomFSChanger {
                         this.stopCb();
                     }
                 }
-                if (msg.type == "Log") {
+                if (msg.type === "Log") {
                     if (options.log != null) {
                         options.log(msg.msg);
                     }
                     else {
+                        // tslint:disable-next-line:no-console
                         console.log("[randomfschanger]" + msg.msg);
                     }
                 }

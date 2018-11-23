@@ -165,7 +165,7 @@ class Worker {
 
                     try {
                         await fse.access(newDirectoryPath);
-                    } catch(e) {
+                    } catch (e) {
                         break; // it's not there.
                     }
                     newDirectoryPath += "" + this._chance.d8();
@@ -182,7 +182,7 @@ class Worker {
 
                     try {
                         await fse.access(newFilePath);
-                    } catch(e) {
+                    } catch (e) {
                         break; // it's not there.
                     }
                     newFilePath += "" + this._chance.d8();
@@ -287,13 +287,13 @@ process.on("message", (msg) => {
         if (msg.seed == null) {
             msg.seed = Math.random();
         }
-    
+
         if (msg.workerCount == null) {
             msg.workerCount = 4;
         }
 
         setupMessage = msg;
-    
+
         return;
     }
 

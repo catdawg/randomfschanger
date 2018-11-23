@@ -1,4 +1,4 @@
-import { fork, ChildProcess } from "child_process";
+import { ChildProcess, fork } from "child_process";
 import * as pathutils from "path";
 
 import { ISetupMessage, IStartMessage, IStopMessage } from "./messages";
@@ -37,29 +37,29 @@ export class RandomFSChanger {
     constructor(path: string, options: IRandomFSChangerOptions = {}) {
 
         this.childProcess = fork(
-            pathutils.join(__dirname, "..", "dist", "fork.js"), 
+            pathutils.join(__dirname, "..", "dist", "fork.js"),
             [],
-            {execArgv: []}
+            {execArgv: []},
         );
 
         this.childProcess.on("message", (msg) => {
             if (msg != null && msg.type != null) {
-                
+
                 if (msg.type === "Stopped") {
                     if (this.stopCb != null) {
                         this.stopCb();
                     }
                 }
 
-                if (msg.type == "Log") {
+                if (msg.type === "Log") {
                     if (options.log != null) {
                         options.log(msg.msg);
                     } else {
+                        // tslint:disable-next-line:no-console
                         console.log("[randomfschanger]" + msg.msg);
                     }
                 }
             }
-            
         });
         const setupMessage: ISetupMessage = {
             type: "Setup",
