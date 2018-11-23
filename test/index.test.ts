@@ -62,4 +62,16 @@ describe("randomFSChanger", () => {
 
         await randomfschanger.stop();
     }, 600000);
+
+    it("test with log", async () => {
+        const randomfschanger = new RandomFSChanger(tmpDir.name, {log: (msg) => console.log("[prefix]" + msg)});
+        
+        randomfschanger.start();
+
+        await new Promise((resolve, reject) => {
+            setTimeout(resolve, 50000)
+        });
+
+        await randomfschanger.stop();
+    }, 600000);
 });

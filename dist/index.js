@@ -17,22 +17,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const child_process_1 = require("child_process");
 const pathutils = __importStar(require("path"));
-const winston = __importStar(require("winston"));
-winston.addColors({
-    debug: "blue",
-    error: "red",
-    info: "green",
-    silly: "magenta",
-    verbose: "cyan",
-    warn: "yellow",
-});
-winston.remove(winston.transports.Console);
-winston.add(new winston.transports.Console({
-    stderrLevels: ["debug", "error", "info", "warn"],
-    level: "debug",
-    format: winston.format.combine(winston.format.splat(), winston.format.colorize(), winston.format.padLevels(), winston.format.timestamp(), winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)),
-    silent: false,
-}));
 /**
  * RandomFSChanger functions as an interface to a separate process that changes a directory randomly.
  * Used to test systems that use data from the filesystem, specially those that listen to changes.
@@ -53,7 +37,12 @@ class RandomFSChanger {
                     }
                 }
                 if (msg.type == "Log") {
-                    winston.info("[randomfschanger]%s", msg.msg);
+                    if (options.log != null) {
+                        options.log(msg.msg);
+                    }
+                    else {
+                        console.log("[randomfschanger]" + msg.msg);
+                    }
                 }
             }
         });

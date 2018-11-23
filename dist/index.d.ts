@@ -7,6 +7,10 @@ export interface IRandomFSChangerOptions {
      * The worker count (defaults to 4), use this to increase load.
      */
     workerCount?: number;
+    /**
+     * all logging messages go here, default just logs to console.
+     */
+    log?: (str: string) => void;
 }
 /**
  * RandomFSChanger functions as an interface to a separate process that changes a directory randomly.

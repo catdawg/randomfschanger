@@ -3,31 +3,6 @@ import * as pathutils from "path";
 
 import { ISetupMessage, IStartMessage, IStopMessage } from "./messages";
 
-import * as winston from "winston";
-
-winston.addColors({
-    debug: "blue",
-    error: "red",
-    info: "green",
-    silly: "magenta",
-    verbose: "cyan",
-    warn: "yellow",
-});
-
-winston.remove(winston.transports.Console);
-winston.add(new winston.transports.Console({
-    stderrLevels: ["debug", "error", "info", "warn"],
-    level: "debug",
-    format: winston.format.combine(
-        winston.format.splat(),
-        winston.format.colorize(),
-        winston.format.padLevels(),
-        winston.format.timestamp(),
-        winston.format.printf((info) => `${info.timestamp} ${info.level}: ${info.message}`),
-    ),
-    silent: false,
-}));
-
 export interface IRandomFSChangerOptions {
     /**
      * The seed (defaults to 0), use this to reliably repeat changes to the filesystem.
@@ -37,6 +12,11 @@ export interface IRandomFSChangerOptions {
      * The worker count (defaults to 4), use this to increase load.
      */
     workerCount?: number; // default 4
+
+    /**
+     * all logging messages go here, default just logs to console.
+     */
+    log?: (str: string) => void;
 }
 
 /**
@@ -68,7 +48,11 @@ export class RandomFSChanger {
                 }
 
                 if (msg.type == "Log") {
-                    winston.info("[randomfschanger]%s", msg.msg);
+                    if (options.log != null) {
+                        options.log(msg.msg);
+                    } else {
+                        console.log("[randomfschanger]" + msg.msg);
+                    }
                 }
             }
             
